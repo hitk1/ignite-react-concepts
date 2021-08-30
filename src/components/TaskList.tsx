@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { v4 as uuid } from 'uuid'
 
 import '../styles/tasklist.scss'
 
 import { FiTrash, FiCheckSquare } from 'react-icons/fi'
 import { useRef } from 'react'
+import { useCallback } from 'react'
 
 interface Task {
-  id: string;
+  id: number;
   title: string;
   isComplete: boolean;
 }
@@ -17,6 +17,15 @@ export function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
+  const getRandomId = useCallback(() => {
+    const randomCode = Number(Array(12)
+      .fill(null)
+      .map(item => Math.round(Math.random() * 9))
+      .join(''))
+
+    return randomCode
+  }, [])
+
   function handleCreateNewTask() {
 
     if (!newTaskTitle)
@@ -25,7 +34,7 @@ export function TaskList() {
     else {
       setTasks([...tasks,
       {
-        id: uuid(),
+        id: getRandomId(),
         title: newTaskTitle,
         isComplete: false
       }])
@@ -38,7 +47,7 @@ export function TaskList() {
     }
   }
 
-  function handleToggleTaskCompletion(id: string) {
+  function handleToggleTaskCompletion(id: number) {
     const foundTask = tasks.find(item => item.id === id)
 
     if (foundTask)
@@ -49,7 +58,7 @@ export function TaskList() {
     setTasks(tasks.slice())
   }
 
-  function handleRemoveTask(id: string) {
+  function handleRemoveTask(id: number) {
     tasks.splice(tasks.findIndex(item => item.id === id), 1)
     setTasks(tasks.slice())
   }
